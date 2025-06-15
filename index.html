@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pixverse Downloader</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      max-width: 600px;
+      width: 100%;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    video {
+      width: 100%;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+    .download {
+      display: block;
+      margin-top: 10px;
+      text-align: center;
+      background: #28a745;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Pixverse Downloader</h2>
+    <input type="text" id="link" placeholder="Paste Pixverse share link...">
+    <button onclick="getVideo()">Get Video</button>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    async function getVideo() {
+      const link = document.getElementById("link").value;
+      const output = document.getElementById("output");
+      output.innerHTML = "Loading...";
+
+      try {
+        const proxy = "proxy.php";
+        const res = await fetch(`${proxy}?url=${encodeURIComponent(link)}`);
+        const data = await res.json();
+
+        if (data.mp4) {
+          output.innerHTML = `
+            <video controls autoplay>
+              <source src="${data.mp4}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <a class="download" href="${data.mp4}" download>⬇ Download Video</a>
+          `;
+        } else {
+          output.innerHTML = "Video link not found.";
+        }
+      } catch (err) {
+        output.innerHTML = "Error fetching video.";
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
